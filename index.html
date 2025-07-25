@@ -2841,6 +2841,12 @@
         function renderMissionList() {
             const container = document.getElementById('missions-list');
             
+            // Vérification défensive : s'assurer que missions est défini
+            if (!missions || typeof missions !== 'object') {
+                console.warn('⚠️ Variable missions non définie, initialisation...');
+                missions = {};
+            }
+            
             if (Object.keys(missions).length === 0) {
                 container.innerHTML = '<p class="text-gray-400 text-sm">Aucune mission créée</p>';
                 return;
@@ -2873,7 +2879,7 @@
                                 </div>
                                 <div class="flex items-center gap-4 text-xs text-gray-400">
                                     <span>📍 ${mission.sector}</span>
-                                    <span>👥 ${mission.assignedSquads.length} escouade(s)</span>
+                                    <span>👥 ${mission.assignedSquads ? mission.assignedSquads.length : 0} escouade(s)</span>
                                     <span class="${statusColor}">${mission.status}</span>
                                 </div>
                             </div>
