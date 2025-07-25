@@ -867,7 +867,19 @@
             if (target.id === 'clear-all-btn') {
                 clearAll();
             } else if (target.id === 'export-squad-btn') {
-                exportSquadData();
+                // Utiliser la nouvelle fonction de synchronisation Firebase
+                const squadData = collectSquadData();
+                if (squadData) {
+                    if (isFirebaseEnabled) {
+                        syncSquadToCommand(squadData);
+                    } else {
+                        // Fallback : téléchargement JSON si Firebase indisponible
+                        downloadSquadData(squadData);
+                        showSyncNotification('Export local réussi - Synchronisation Firebase indisponible', 'info');
+                    }
+                } else {
+                    showSyncNotification('❌ Aucune donnée d\'escouade à envoyer', 'error');
+                }
             } else if (target.id === 'change-squad-btn') {
                 showSquadSelectionScreen();
             } else if (target.classList.contains('squad-selection-card')) {
