@@ -2998,7 +2998,7 @@
                             <h2 class="text-2xl font-bold mb-2 text-orange-400">${mission.name}</h2>
                             <div class="flex items-center gap-4 text-sm text-gray-300">
                                 <span>📍 ${mission.sector}</span>
-                                <span>👥 ${mission.assignedSquads.length} escouade(s)</span>
+                                <span>👥 ${mission.assignedSquads ? mission.assignedSquads.length : 0} escouade(s)</span>
                                 <span class="px-2 py-1 rounded ${statusColor.replace('text-', 'bg-').replace('-400', '-900')} ${statusColor}">
                                     ${mission.status}
                                 </span>
