@@ -16,7 +16,11 @@
     <!-- iOS App Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiBmaWxsPSIjMGQxMTE3Ii8+Cjx0ZXh0IHg9IjkwIiB5PSI5MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI0OCIgZmlsbD0iIzIyZDNlZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkM8L3RleHQ+Cjwvc3ZnPg==">
     <link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUyIiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDE1MiAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTIiIGhlaWdodD0iMTUyIiBmaWxsPSIjMGQxMTE3Ii8+Cjx0ZXh0IHg9Ijc2IiB5PSI3NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI0MCIgZmlsbD0iIzIyZDNlZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkM8L3RleHQ+Cjwvc3ZnPg==">
-    <link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMGQxMTE3Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIzMiIgZmlsbD0iIzIyZDNlZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkM8L3RleHQ+Cjwvc3ZnPg==">
+    <link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMGQxMTE3Ci8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIzMiIgZmlsbD0iIzIyZDNlZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkM8L3RleHQ+Cjwvc3ZnPg==">
+    
+    <!-- Firebase SDK pour synchronisation avec État-Major -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <!-- Embedded Resources for Offline Compatibility -->
     <style>
         /* Essential CSS to replace Tailwind */
@@ -1107,6 +1111,196 @@
             } else {
                 initializeIOSFixes();
             }
+        }
+        
+        // ===== SYNCHRONISATION FIREBASE AVEC ÉTAT-MAJOR =====
+        
+        // Configuration Firebase (identique à index.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCw_ZmPc3U82A77qLrS-97X5s_Bn_srUik",
+            authDomain: "em-commandement.firebaseapp.com",
+            databaseURL: "https://em-commandement-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "em-commandement",
+            storageBucket: "em-commandement.firebasestorage.app",
+            messagingSenderId: "974967110531",
+            appId: "1:974967110531:web:1ff295ee931c28f121d4b6",
+            measurementId: "G-VXHG7H2L2J"
+        };
+        
+        // Initialiser Firebase
+        let firebaseApp = null;
+        let database = null;
+        let isFirebaseEnabled = false;
+        
+        try {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            isFirebaseEnabled = true;
+            console.log('🔥 Firebase initialisé pour synchronisation État-Major');
+        } catch (error) {
+            console.warn('⚠️ Firebase non disponible, mode local uniquement:', error.message);
+            isFirebaseEnabled = false;
+        }
+        
+        // Fonction de synchronisation automatique vers l'État-Major
+        function syncSquadToCommand(squadData) {
+            if (!isFirebaseEnabled) {
+                console.warn('⚠️ Synchronisation impossible : Firebase non disponible');
+                return false;
+            }
+            
+            try {
+                // Ajouter des métadonnées de synchronisation
+                const syncData = {
+                    ...squadData,
+                    syncedAt: new Date().toISOString(),
+                    syncSource: 'escouade-interface',
+                    syncId: Date.now() + Math.random()
+                };
+                
+                // Envoyer vers Firebase sous 'squads_sync'
+                database.ref('squads_sync').push(syncData).then(() => {
+                    console.log(`✅ Escouade ${squadData.name} synchronisée vers État-Major`);
+                    showSyncNotification(`Escouade ${squadData.name} envoyée vers l'État-Major`, 'success');
+                }).catch((error) => {
+                    console.error('❌ Erreur synchronisation:', error);
+                    showSyncNotification('Erreur de synchronisation', 'error');
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Erreur lors de la synchronisation:', error);
+                return false;
+            }
+        }
+        
+        // Afficher une notification de synchronisation
+        function showSyncNotification(message, type = 'info') {
+            // Créer la notification
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg text-white font-bold transition-all duration-300 transform translate-x-full`;
+            
+            if (type === 'success') {
+                notification.style.backgroundColor = '#10b981';
+                notification.innerHTML = `✅ ${message}`;
+            } else if (type === 'error') {
+                notification.style.backgroundColor = '#ef4444';
+                notification.innerHTML = `❌ ${message}`;
+            } else {
+                notification.style.backgroundColor = '#3b82f6';
+                notification.innerHTML = `📮 ${message}`;
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Animation d'entrée
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Animation de sortie
+            setTimeout(() => {
+                notification.style.transform = 'translateX(full)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+        
+        // Modifier la fonction d'export existante pour inclure la synchronisation automatique
+        function exportSquadData() {
+            const squadData = collectSquadData();
+            
+            if (!squadData || !squadData.personnel || squadData.personnel.length === 0) {
+                showSyncNotification('Aucune donnée d\'escouade à exporter', 'error');
+                return;
+            }
+            
+            // Export JSON classique (pour compatibilité)
+            const dataStr = JSON.stringify(squadData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `escouade_${squadData.name}_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            // Synchronisation automatique vers État-Major
+            if (isFirebaseEnabled) {
+                syncSquadToCommand(squadData);
+            } else {
+                showSyncNotification('Export local réussi - Synchronisation Firebase indisponible', 'info');
+            }
+        }
+        
+        // Fonction pour collecter les données d'escouade réelles
+        function collectSquadData() {
+            // Vérifier qu'une escouade est sélectionnée
+            if (!selectedSquadType || !currentSquad) {
+                console.warn('⚠️ Aucune escouade sélectionnée');
+                return null;
+            }
+            
+            // Récupérer la configuration de l'escouade
+            const squadConfig = SQUAD_CONFIG[selectedSquadType];
+            if (!squadConfig) {
+                console.warn('⚠️ Configuration d\'escouade introuvable');
+                return null;
+            }
+            
+            // Collecter les données des membres
+            const personnel = [];
+            
+            if (currentSquad.members && Array.isArray(currentSquad.members)) {
+                currentSquad.members.forEach((member, index) => {
+                    if (member.name && member.name.trim()) {
+                        personnel.push({
+                            name: member.name.trim(),
+                            grade: member.grade || 'Soldat',
+                            role: member.role || 'Fusilier',
+                            position: member.position || `Opérateur ${index + 1}`,
+                            team: member.team || null,
+                            status: 'Actif'
+                        });
+                    }
+                });
+            }
+            
+            // Vérifier qu'il y a au moins un membre
+            if (personnel.length === 0) {
+                console.warn('⚠️ Aucun membre saisi dans l\'escouade');
+                return null;
+            }
+            
+            // Construire les données complètes de l'escouade
+            const squadData = {
+                name: selectedSquadType,
+                type: squadConfig.type || 'Terrain',
+                personnel: personnel,
+                frequency: squadConfig.frequency + ' MHz',
+                color: squadConfig.color,
+                exportDate: new Date().toISOString(),
+                status: 'Active',
+                effectif: {
+                    total: personnel.length,
+                    complet: personnel.length >= 10
+                },
+                metadata: {
+                    createdBy: 'Interface-SL',
+                    version: '4.2',
+                    lastModified: new Date().toISOString()
+                }
+            };
+            
+            console.log(`📋 Données collectées pour escouade ${selectedSquadType}:`, {
+                nom: squadData.name,
+                effectif: `${personnel.length} membres`,
+                fréquence: squadData.frequency,
+                couleur: squadData.color
+            });
+            
+            return squadData;
         }
     </script>
 </body>
