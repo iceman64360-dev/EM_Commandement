@@ -1174,7 +1174,90 @@
             }
         }
         
-        // Afficher une notification de synchronisation
+        // Fonction pour synchroniser l'escouade vers l'État-Major via Firebase
+        function syncSquadToCommand(squadData) {
+            if (!squadData) {
+                showSyncNotification('❌ Erreur : Aucune donnée d\'escouade à synchroniser', 'error');
+                return;
+            }
+            
+            if (!isFirebaseEnabled || !database) {
+                showSyncNotification('❌ Firebase indisponible - Impossible de synchroniser', 'error');
+                return;
+            }
+            
+            try {
+                // Afficher notification de début d'envoi
+                showSyncNotification('📡 Envoi en cours vers l\'État-Major...', 'info');
+                
+                // Envoyer l'escouade via Firebase pour synchronisation avec index.html
+                database.ref('squad_sync').push(squadData)
+                    .then(() => {
+                        console.log(`✅ Escouade ${squadData.name} synchronisée avec l'État-Major`);
+                        showSyncNotification(
+                            `✅ Escouade ${squadData.name} envoyée !`, 
+                            `${squadData.personnel.length} membres synchronisés avec l'État-Major`, 
+                            'success'
+                        );
+                        
+                        // Optionnel : Nettoyer l'interface après envoi réussi
+                        setTimeout(() => {
+                            if (confirm('Escouade envoyée avec succès ! Voulez-vous revenir à la sélection d\'escouade ?')) {
+                                resetToSquadSelection();
+                            }
+                        }, 2000);
+                    })
+                    .catch((error) => {
+                        console.error('❌ Erreur synchronisation Firebase:', error);
+                        showSyncNotification(
+                            '❌ Erreur de synchronisation', 
+                            'Impossible d\'envoyer l\'escouade à l\'État-Major', 
+                            'error'
+                        );
+                        
+                        // Fallback : téléchargement JSON en cas d'erreur Firebase
+                        setTimeout(() => {
+                            if (confirm('Synchronisation échouée. Voulez-vous télécharger les données en JSON ?')) {
+                                downloadSquadData(squadData);
+                            }
+                        }, 1000);
+                    });
+            } catch (error) {
+                console.error('❌ Erreur critique synchronisation:', error);
+                showSyncNotification('❌ Erreur critique de synchronisation', 'error');
+            }
+        }
+        
+        // Fonction pour télécharger les données en JSON (fallback)
+        function downloadSquadData(squadData) {
+            try {
+                const dataStr = JSON.stringify(squadData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `escouade_${squadData.name}_${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                console.log(`📁 Téléchargement JSON: ${exportFileDefaultName}`);
+            } catch (error) {
+                console.error('❌ Erreur téléchargement JSON:', error);
+                showSyncNotification('❌ Erreur de téléchargement', 'error');
+            }
+        }
+        
+        // Fonction pour retourner à la sélection d'escouade
+        function resetToSquadSelection() {
+            selectedSquadType = null;
+            currentSquad = null;
+            document.getElementById('squad-selection').style.display = 'block';
+            document.getElementById('squad-config').style.display = 'none';
+            console.log('🔄 Retour à la sélection d\'escouade');
+        }
+        
+        // Fonction pour afficher les notifications de synchronisation
         function showSyncNotification(message, type = 'info') {
             // Créer la notification
             const notification = document.createElement('div');
@@ -1230,6 +1313,8 @@
             if (isFirebaseEnabled) {
                 syncSquadToCommand(squadData);
             } else {
+                // Fallback : téléchargement JSON si Firebase indisponible
+                downloadSquadData(squadData);
                 showSyncNotification('Export local réussi - Synchronisation Firebase indisponible', 'info');
             }
         }
