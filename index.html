@@ -1538,6 +1538,196 @@
             container.innerHTML = html;
         }
         
+        // Fonction pour sélectionner une escouade et afficher ses détails
+        function selectSquad(squadName) {
+            selectedSquad = squadName;
+            renderSquadsList();
+            renderSquadDetail();
+            console.log(`👥 Escouade sélectionnée: ${squadName}`);
+        }
+        
+        // Fonction pour rendre le détail d'une escouade
+        function renderSquadDetail() {
+            const container = document.getElementById('squad-detail');
+            
+            if (!selectedSquad || !squads[selectedSquad]) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-400 py-12">
+                        <p>Sélectionnez une escouade pour voir les détails</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const squad = squads[selectedSquad];
+            const squadColor = getSquadColor(squad.name);
+            const personnelCount = squad.personnel ? squad.personnel.filter(p => p.name && p.name.trim()).length : 0;
+            const totalSlots = squad.personnel ? squad.personnel.length : 0;
+            const frequency = squad.frequency || SQUAD_FREQUENCIES[squad.name] || 'N/A';
+            
+            // Analyser les trades dans l'escouade
+            const tradeStats = {};
+            if (squad.personnel) {
+                squad.personnel.forEach(member => {
+                    if (member.role && TRADES[member.role]) {
+                        tradeStats[member.role] = (tradeStats[member.role] || 0) + 1;
+                    }
+                });
+            }
+            
+            // Trouver les missions assignées à cette escouade
+            const assignedMissions = Object.entries(missions).filter(([name, mission]) => 
+                mission.assignedSquads && mission.assignedSquads.includes(squad.name)
+            );
+            
+            let content = `
+                <div class="squad-detail-content">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-2" style="color: ${squadColor}">${squad.name}</h2>
+                            <div class="flex items-center gap-4 text-sm text-gray-300">
+                                <span>👥 ${personnelCount}/${totalSlots} membres</span>
+                                <span>📻 ${frequency} MHz</span>
+                                <span class="px-2 py-1 rounded ${
+                                    squad.status === 'Active' ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
+                                }">${squad.status || 'Active'}</span>
+                                ${squad.syncedFromSL ? '<span class="px-2 py-1 rounded bg-blue-900 text-blue-300">📫 Syncé SL</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="deleteSquad('${squad.name}')" 
+                                    class="bg-red-900/20 hover:bg-red-900/40 text-red-400 hover:text-red-300 px-3 py-1 rounded border border-red-500/30 hover:border-red-500/50 transition-all duration-200 text-sm flex items-center gap-1"
+                                    title="Supprimer cette escouade">
+                                🗑️ Supprimer
+                            </button>
+                        </div>
+                    </div>
+            `;
+            
+            // Afficher les missions assignées
+            if (assignedMissions.length > 0) {
+                content += `
+                    <div class="bg-slate-800 p-4 rounded-lg mb-6">
+                        <h3 class="text-lg font-semibold text-orange-400 mb-3">🎯 Missions Assignées</h3>
+                        <div class="space-y-2">
+                `;
+                
+                assignedMissions.forEach(([missionName, mission]) => {
+                    const statusColor = {
+                        'En préparation': 'text-yellow-400',
+                        'En cours': 'text-blue-400',
+                        'Terminée': 'text-green-400',
+                        'Annulée': 'text-red-400'
+                    }[mission.status] || 'text-gray-400';
+                    
+                    content += `
+                        <div class="flex justify-between items-center p-3 bg-slate-700 rounded cursor-pointer hover:bg-slate-600 transition-colors"
+                             onclick="showTab('missions'); selectMission('${missionName}')">
+                            <div class="flex-grow">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="font-bold text-lg text-orange-400">${mission.name}</h4>
+                                    <span class="text-xs px-2 py-1 rounded bg-orange-900/20 text-orange-300">
+                                        ${mission.category}
+                                    </span>
+                                </div>
+                                <div class="text-xs text-gray-400">
+                                    📍 ${mission.sector} • <span class="${statusColor}">${mission.status}</span>
+                                </div>
+                            </div>
+                            <div class="text-orange-400">
+                                →
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                content += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Afficher les trades
+            if (Object.keys(tradeStats).length > 0) {
+                content += `
+                    <div class="bg-slate-800 p-4 rounded-lg mb-6">
+                        <h3 class="text-lg font-semibold text-cyan-400 mb-3">⚔️ Composition par Trades</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                `;
+                
+                Object.entries(tradeStats).forEach(([trade, count]) => {
+                    const tradeInfo = TRADES[trade];
+                    if (tradeInfo) {
+                        content += `
+                            <div class="flex items-center gap-2 p-2 bg-slate-700 rounded" style="border-left: 3px solid ${tradeInfo.color}">
+                                <span class="text-lg">${tradeInfo.icon}</span>
+                                <div class="flex-grow">
+                                    <div class="text-sm font-semibold" style="color: ${tradeInfo.color}">${tradeInfo.name}</div>
+                                    <div class="text-xs text-gray-400">${count} membre${count > 1 ? 's' : ''}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                content += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Afficher le personnel
+            if (squad.personnel && squad.personnel.length > 0) {
+                content += `
+                    <div class="bg-slate-800 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-cyan-400 mb-3">👥 Personnel (${personnelCount}/${totalSlots})</h3>
+                        <div class="space-y-2">
+                `;
+                
+                squad.personnel.forEach((member, index) => {
+                    if (member.name && member.name.trim()) {
+                        const tradeInfo = TRADES[member.role];
+                        const tradeColor = tradeInfo ? tradeInfo.color : '#6b7280';
+                        const tradeIcon = tradeInfo ? tradeInfo.icon : '👤';
+                        
+                        content += `
+                            <div class="flex items-center gap-3 p-3 bg-slate-700 rounded">
+                                <div class="flex-shrink-0">
+                                    <span class="text-lg">${tradeIcon}</span>
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="font-bold text-white">${member.name}</span>
+                                        <span class="text-xs px-2 py-1 rounded bg-gray-700 text-gray-300">${member.grade || 'Soldat'}</span>
+                                    </div>
+                                    <div class="text-sm" style="color: ${tradeColor}">
+                                        ${member.role || 'Fusilier'} ${member.position ? `• ${member.position}` : ''}
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-400">
+                                    ${member.status || 'Actif'}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                content += `
+                        </div>
+                    </div>
+                `;
+            } else {
+                content += `
+                    <div class="bg-slate-800 p-4 rounded-lg text-center text-gray-400">
+                        <p>Aucun personnel assigné à cette escouade</p>
+                    </div>
+                `;
+            }
+            
+            content += '</div>';
+            container.innerHTML = content;
+        }
+        
         // Fonction pour afficher toutes les missions dans le dashboard
         function renderDashboardMissions() {
             const container = document.getElementById('dashboard-all-missions');
