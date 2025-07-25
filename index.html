@@ -5300,6 +5300,52 @@
             }
         }
         
+        // === SYNCHRONISATION ESCOUADES DEPUIS SL ===
+        
+        // Fonction pour écouter les escouades synchronisées depuis escouade.html
+        function listenForSquadSync() {
+            if (!isFirebaseEnabled || !database) {
+                console.log('📱 Mode local : écoute escouades SL désactivée');
+                return;
+            }
+            
+            try {
+                // Écouter les nouvelles escouades envoyées par les SL
+                database.ref('squad_sync').on('child_added', (snapshot) => {
+                    const squadData = snapshot.val();
+                    if (squadData && squadData.name) {
+                        console.log(`📫 Escouade reçue depuis SL: ${squadData.name}`);
+                        
+                        // Ajouter l'escouade aux données locales
+                        squads[squadData.name] = {
+                            name: squadData.name,
+                            type: squadData.type || 'Terrain',
+                            personnel: squadData.personnel || [],
+                            frequency: squadData.frequency || '30.0 MHz',
+                            color: squadData.color || '#4CAF50',
+                            createdAt: squadData.exportDate || new Date().toISOString(),
+                            syncedFromSL: true,
+                            lastSync: new Date().toISOString()
+                        };
+                        
+                        // Sauvegarder et mettre à jour l'interface
+                        saveState();
+                        updateAllInterfaces();
+                        
+                        // Notification de réception
+                        showNotification('📫 Escouade Reçue', `Escouade ${squadData.name} synchronisée depuis SL (${squadData.personnel.length} membres)`, 'success');
+                        
+                        // Supprimer l'entrée de synchronisation pour éviter les doublons
+                        snapshot.ref.remove();
+                    }
+                });
+                
+                console.log('🔊 Écoute escouades SL activée');
+            } catch (error) {
+                console.error('❌ Erreur écoute escouades SL:', error);
+            }
+        }
+        
         // === MODAL DE CONFIRMATION PERSONNALISÉE ===
         
         // Variable pour stocker la fonction de callback de confirmation
@@ -8055,6 +8101,15 @@
                 pseudoInput.addEventListener('input', function() {
                     sessionError.classList.add('hidden');
                 });
+            }
+            
+            // Fonction pour afficher le statut Firebase
+            function displayFirebaseStatus() {
+                if (isFirebaseEnabled) {
+                    console.log('🔥 Firebase activé - Synchronisation multi-appareils disponible');
+                } else {
+                    console.log('📱 Mode local - Données sauvegardées localement uniquement');
+                }
             }
             
             // Afficher le statut Firebase au chargement
