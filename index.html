@@ -338,6 +338,50 @@
         </div>
     </div>
 
+    <!-- Modal de session utilisateur -->
+    <div id="user-session-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md mx-4 border border-cyan-500/30">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">👤 SESSION UTILISATEUR</h2>
+                <p id="session-message" class="text-gray-400">Veuillez saisir votre pseudo pour créer votre session</p>
+            </div>
+            
+            <!-- Affichage des utilisateurs déjà connectés -->
+            <div id="existing-users-section" class="hidden mb-6">
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-sm font-semibold text-amber-400 mb-2">⚠️ Utilisateurs déjà connectés :</h3>
+                    <div id="existing-users-list" class="text-sm text-gray-300"></div>
+                    <p class="text-xs text-gray-500 mt-2">Voulez-vous vous connecter également ?</p>
+                </div>
+            </div>
+            
+            <form id="user-session-form" class="space-y-4">
+                <div>
+                    <label for="user-pseudo" class="block text-sm font-medium text-gray-300 mb-2">Votre pseudo</label>
+                    <input type="text" id="user-pseudo" name="user-pseudo" required maxlength="20"
+                           class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 font-size-16"
+                           placeholder="Ex: Commandant_Alpha">
+                </div>
+                
+                <div id="session-error" class="text-red-400 text-sm hidden"></div>
+                
+                <div class="flex gap-3">
+                    <button type="button" id="cancel-session" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                        ❌ Annuler
+                    </button>
+                    <button type="submit" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                        🚀 REJOINDRE
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Section d'information sur les sessions multiples -->
+            <div class="mt-4 text-center">
+                <p class="text-xs text-gray-500">Les sessions multiples permettent un travail collaboratif en temps réel</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Interface principale (cachée par défaut) -->
     <div id="main-interface" class="hidden">
         <!-- Notification -->
@@ -7488,18 +7532,109 @@
 
     <!-- Script d'authentification -->
     <script>
-        // ===== SYSTÈME D'AUTHENTIFICATION =====
+        // ===== SYSTÈME D'AUTHENTIFICATION ET SESSIONS =====
         const AUTH_CREDENTIALS = {
             username: 'COMMANDANT',
             password: 'ETAT-MAJOR-2024'
         };
 
+        // Variables de session
+        let currentUser = null;
+        let connectedUsers = [];
+
         // Vérifier si l'utilisateur est déjà authentifié
         function checkAuthentication() {
             const isAuthenticated = sessionStorage.getItem('commandement_auth') === 'true';
-            if (isAuthenticated) {
+            const userSession = sessionStorage.getItem('user_session');
+            
+            if (isAuthenticated && userSession) {
+                currentUser = JSON.parse(userSession);
+                loadConnectedUsers();
                 showMainInterface();
             }
+        }
+
+        // Charger la liste des utilisateurs connectés
+        function loadConnectedUsers() {
+            const savedUsers = localStorage.getItem('connected_users');
+            if (savedUsers) {
+                connectedUsers = JSON.parse(savedUsers);
+            } else {
+                connectedUsers = [];
+            }
+        }
+
+        // Sauvegarder la liste des utilisateurs connectés
+        function saveConnectedUsers() {
+            localStorage.setItem('connected_users', JSON.stringify(connectedUsers));
+        }
+
+        // Vérifier si un pseudo existe déjà
+        function isPseudoTaken(pseudo) {
+            return connectedUsers.some(user => user.pseudo.toLowerCase() === pseudo.toLowerCase());
+        }
+
+        // Ajouter un utilisateur à la session
+        function addUserToSession(pseudo) {
+            const newUser = {
+                pseudo: pseudo,
+                connectedAt: new Date().toISOString(),
+                sessionId: Date.now() + Math.random()
+            };
+            
+            connectedUsers.push(newUser);
+            currentUser = newUser;
+            
+            sessionStorage.setItem('user_session', JSON.stringify(newUser));
+            saveConnectedUsers();
+            
+            return newUser;
+        }
+
+        // Supprimer un utilisateur de la session
+        function removeUserFromSession(sessionId) {
+            connectedUsers = connectedUsers.filter(user => user.sessionId !== sessionId);
+            saveConnectedUsers();
+        }
+
+        // Afficher la modal de session utilisateur
+        function showUserSessionModal() {
+            loadConnectedUsers();
+            
+            const modal = document.getElementById('user-session-modal');
+            const existingUsersSection = document.getElementById('existing-users-section');
+            const existingUsersList = document.getElementById('existing-users-list');
+            const sessionMessage = document.getElementById('session-message');
+            
+            // Vérifier s'il y a des utilisateurs déjà connectés
+            if (connectedUsers.length > 0) {
+                existingUsersSection.classList.remove('hidden');
+                sessionMessage.textContent = 'Des utilisateurs sont déjà connectés. Saisissez votre pseudo pour les rejoindre :';
+                
+                // Afficher la liste des utilisateurs connectés
+                let usersList = '';
+                connectedUsers.forEach((user, index) => {
+                    const connectedTime = new Date(user.connectedAt).toLocaleTimeString('fr-FR');
+                    usersList += `<div class="flex justify-between items-center py-1">`;
+                    usersList += `<span>👤 ${user.pseudo}</span>`;
+                    usersList += `<span class="text-xs text-gray-500">depuis ${connectedTime}</span>`;
+                    usersList += `</div>`;
+                });
+                existingUsersList.innerHTML = usersList;
+            } else {
+                existingUsersSection.classList.add('hidden');
+                sessionMessage.textContent = 'Veuillez saisir votre pseudo pour créer votre session';
+            }
+            
+            modal.classList.remove('hidden');
+            document.getElementById('user-pseudo').focus();
+        }
+
+        // Masquer la modal de session utilisateur
+        function hideUserSessionModal() {
+            document.getElementById('user-session-modal').classList.add('hidden');
+            document.getElementById('user-pseudo').value = '';
+            document.getElementById('session-error').classList.add('hidden');
         }
 
         // Afficher l'interface principale
@@ -7509,6 +7644,9 @@
             
             console.log('🔐 Authentification réussie, interface État-Major activée');
             
+            // Afficher les informations de session
+            updateUserSessionDisplay();
+            
             // Initialiser l'heure
             updateTime();
             setInterval(updateTime, 1000);
@@ -7516,19 +7654,62 @@
             // Configurer le menu mobile
             setupMobileMenu();
             
-            // Afficher une notification de bienvenue
+            // Afficher une notification de bienvenue personnalisée
             setTimeout(() => {
-                showNotification('Interface État-Major activée avec succès', 'success');
+                const welcomeMessage = currentUser ? 
+                    `Bienvenue ${currentUser.pseudo} ! Interface État-Major activée` : 
+                    'Interface État-Major activée avec succès';
+                showNotification(welcomeMessage, 'success');
             }, 1000);
+        }
+
+        // Mettre à jour l'affichage des sessions utilisateur
+        function updateUserSessionDisplay() {
+            if (!currentUser) return;
+            
+            // Ajouter l'affichage du pseudo dans l'en-tête
+            const header = document.querySelector('header h1');
+            if (header && !document.getElementById('user-display')) {
+                const userDisplay = document.createElement('div');
+                userDisplay.id = 'user-display';
+                userDisplay.className = 'text-xs text-cyan-300 mt-1';
+                userDisplay.innerHTML = `👤 Connecté en tant que: ${currentUser.pseudo}`;
+                header.parentNode.appendChild(userDisplay);
+            }
+            
+            // Afficher le nombre d'utilisateurs connectés
+            setTimeout(() => {
+                if (connectedUsers.length > 1) {
+                    showNotification(`${connectedUsers.length} utilisateurs connectés en simultané`, 'info');
+                }
+            }, 2000);
         }
 
         // Fonction de déconnexion
         function logout() {
+            // Supprimer l'utilisateur actuel de la liste des connectés
+            if (currentUser) {
+                removeUserFromSession(currentUser.sessionId);
+                console.log(`🚪 Déconnexion de ${currentUser.pseudo}`);
+            }
+            
+            // Nettoyer la session locale
             sessionStorage.removeItem('commandement_auth');
+            sessionStorage.removeItem('user_session');
+            currentUser = null;
+            
+            // Retourner à l'écran d'authentification
             document.getElementById('main-interface').classList.add('hidden');
             document.getElementById('auth-screen').style.display = 'flex';
             document.getElementById('auth-form').reset();
-            console.log('🚪 Déconnexion réussie');
+            
+            // Supprimer l'affichage utilisateur
+            const userDisplay = document.getElementById('user-display');
+            if (userDisplay) {
+                userDisplay.remove();
+            }
+            
+            console.log('✅ Déconnexion réussie');
         }
 
         // Mise à jour de l'heure
@@ -7581,7 +7762,10 @@
                 if (username === AUTH_CREDENTIALS.username && password === AUTH_CREDENTIALS.password) {
                     // Authentification réussie
                     sessionStorage.setItem('commandement_auth', 'true');
-                    showMainInterface();
+                    
+                    // Masquer l'écran d'authentification et afficher la modal de session
+                    document.getElementById('auth-screen').style.display = 'none';
+                    showUserSessionModal();
                 } else {
                     // Authentification échouée
                     authError.textContent = '❌ Identifiants incorrects';
@@ -7595,6 +7779,61 @@
                     // Vider les champs
                     document.getElementById('password').value = '';
                 }
+            });
+        });
+
+        // Gestionnaires d'événements pour la modal de session utilisateur
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestionnaire du formulaire de session utilisateur
+            const userSessionForm = document.getElementById('user-session-form');
+            const sessionError = document.getElementById('session-error');
+            
+            userSessionForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const pseudo = document.getElementById('user-pseudo').value.trim();
+                
+                // Validation du pseudo
+                if (!pseudo) {
+                    sessionError.textContent = '⚠️ Veuillez saisir un pseudo';
+                    sessionError.classList.remove('hidden');
+                    return;
+                }
+                
+                if (pseudo.length < 2) {
+                    sessionError.textContent = '⚠️ Le pseudo doit contenir au moins 2 caractères';
+                    sessionError.classList.remove('hidden');
+                    return;
+                }
+                
+                if (isPseudoTaken(pseudo)) {
+                    sessionError.textContent = '❌ Ce pseudo est déjà utilisé par un autre utilisateur connecté';
+                    sessionError.classList.remove('hidden');
+                    return;
+                }
+                
+                // Ajouter l'utilisateur à la session
+                addUserToSession(pseudo);
+                
+                // Masquer la modal et afficher l'interface principale
+                hideUserSessionModal();
+                showMainInterface();
+                
+                console.log(`✅ Session créée pour ${pseudo}`);
+            });
+            
+            // Gestionnaire du bouton annuler
+            document.getElementById('cancel-session').addEventListener('click', function() {
+                // Annuler la connexion et retourner à l'écran d'authentification
+                sessionStorage.removeItem('commandement_auth');
+                hideUserSessionModal();
+                document.getElementById('auth-screen').style.display = 'flex';
+                console.log('🚫 Session annulée');
+            });
+            
+            // Effacer les erreurs quand l'utilisateur tape
+            document.getElementById('user-pseudo').addEventListener('input', function() {
+                sessionError.classList.add('hidden');
             });
         });
 
