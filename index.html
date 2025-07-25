@@ -2300,7 +2300,7 @@
             
             // Vérifier si l'escouade est assignée à des missions
             const assignedMissions = Object.values(missions).filter(mission => 
-                mission.assignedSquads.includes(squadName)
+                mission.assignedSquads && mission.assignedSquads.includes(squadName)
             );
             
             let warningMessage = `Êtes-vous sûr de vouloir dissoudre l'escouade "${squadName}" ?\n\nCette action est irréversible et supprimera définitivement :`;
@@ -2850,7 +2850,7 @@
                     
                     // Trouver les missions assignées
                     const assignedMissions = Object.values(missions).filter(mission => 
-                        mission.assignedSquads.includes(squad.name)
+                        mission.assignedSquads && mission.assignedSquads.includes(squad.name)
                     );
                     
                     content += `
