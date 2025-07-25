@@ -21,6 +21,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Bibliothèque jsPDF pour l'export PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Firebase SDK pour synchronisation multi-appareils -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <!-- Police de caractères -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -7538,6 +7542,33 @@
             password: 'ETAT-MAJOR-2024'
         };
 
+        // Configuration Firebase pour synchronisation multi-appareils
+        const firebaseConfig = {
+            apiKey: "AIzaSyCw_ZmPc3U82A77qLrS-97X5s_Bn_srUik",
+            authDomain: "em-commandement.firebaseapp.com",
+            databaseURL: "https://em-commandement-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "em-commandement",
+            storageBucket: "em-commandement.firebasestorage.app",
+            messagingSenderId: "974967110531",
+            appId: "1:974967110531:web:1ff295ee931c28f121d4b6",
+            measurementId: "G-VXHG7H2L2J"
+        };
+
+        // Initialiser Firebase
+        let firebaseApp = null;
+        let database = null;
+        let isFirebaseEnabled = false;
+
+        try {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            isFirebaseEnabled = true;
+            console.log('🔥 Firebase initialisé avec succès');
+        } catch (error) {
+            console.warn('⚠️ Firebase non disponible, utilisation du localStorage:', error.message);
+            isFirebaseEnabled = false;
+        }
+
         // Variables de session
         let currentUser = null;
         let connectedUsers = [];
@@ -7554,8 +7585,34 @@
             }
         }
 
-        // Charger la liste des utilisateurs connectés
+        // Charger la liste des utilisateurs connectés (Firebase + localStorage fallback)
         function loadConnectedUsers() {
+            if (isFirebaseEnabled) {
+                // Utiliser Firebase pour la synchronisation temps réel
+                database.ref('connected_users').once('value').then((snapshot) => {
+                    connectedUsers = snapshot.val() || [];
+                    console.log('📥 Sessions chargées depuis Firebase:', connectedUsers.length, 'utilisateur(s)');
+                }).catch((error) => {
+                    console.warn('⚠️ Erreur Firebase, fallback localStorage:', error.message);
+                    loadConnectedUsersLocal();
+                });
+                
+                // Écouter les changements en temps réel
+                database.ref('connected_users').on('value', (snapshot) => {
+                    const updatedUsers = snapshot.val() || [];
+                    if (JSON.stringify(updatedUsers) !== JSON.stringify(connectedUsers)) {
+                        connectedUsers = updatedUsers;
+                        updateUserSessionDisplay();
+                        console.log('🔄 Sessions mises à jour en temps réel:', connectedUsers.length, 'utilisateur(s)');
+                    }
+                });
+            } else {
+                loadConnectedUsersLocal();
+            }
+        }
+
+        // Charger depuis localStorage (fallback)
+        function loadConnectedUsersLocal() {
             const savedUsers = localStorage.getItem('connected_users');
             if (savedUsers) {
                 connectedUsers = JSON.parse(savedUsers);
@@ -7564,9 +7621,20 @@
             }
         }
 
-        // Sauvegarder la liste des utilisateurs connectés
+        // Sauvegarder la liste des utilisateurs connectés (Firebase + localStorage)
         function saveConnectedUsers() {
-            localStorage.setItem('connected_users', JSON.stringify(connectedUsers));
+            if (isFirebaseEnabled) {
+                // Sauvegarder dans Firebase pour synchronisation
+                database.ref('connected_users').set(connectedUsers).then(() => {
+                    console.log('💾 Sessions sauvegardées dans Firebase');
+                }).catch((error) => {
+                    console.warn('⚠️ Erreur sauvegarde Firebase, fallback localStorage:', error.message);
+                    localStorage.setItem('connected_users', JSON.stringify(connectedUsers));
+                });
+            } else {
+                // Fallback localStorage
+                localStorage.setItem('connected_users', JSON.stringify(connectedUsers));
+            }
         }
 
         // Vérifier si un pseudo existe déjà
@@ -7788,53 +7856,64 @@
             const userSessionForm = document.getElementById('user-session-form');
             const sessionError = document.getElementById('session-error');
             
-            userSessionForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const pseudo = document.getElementById('user-pseudo').value.trim();
-                
-                // Validation du pseudo
-                if (!pseudo) {
-                    sessionError.textContent = '⚠️ Veuillez saisir un pseudo';
-                    sessionError.classList.remove('hidden');
-                    return;
-                }
-                
-                if (pseudo.length < 2) {
-                    sessionError.textContent = '⚠️ Le pseudo doit contenir au moins 2 caractères';
-                    sessionError.classList.remove('hidden');
-                    return;
-                }
-                
-                if (isPseudoTaken(pseudo)) {
-                    sessionError.textContent = '❌ Ce pseudo est déjà utilisé par un autre utilisateur connecté';
-                    sessionError.classList.remove('hidden');
-                    return;
-                }
-                
-                // Ajouter l'utilisateur à la session
-                addUserToSession(pseudo);
-                
-                // Masquer la modal et afficher l'interface principale
-                hideUserSessionModal();
-                showMainInterface();
-                
-                console.log(`✅ Session créée pour ${pseudo}`);
-            });
+            if (userSessionForm) {
+                userSessionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const pseudo = document.getElementById('user-pseudo').value.trim();
+                    
+                    // Validation du pseudo
+                    if (!pseudo) {
+                        sessionError.textContent = '⚠️ Veuillez saisir un pseudo';
+                        sessionError.classList.remove('hidden');
+                        return;
+                    }
+                    
+                    if (pseudo.length < 2) {
+                        sessionError.textContent = '⚠️ Le pseudo doit contenir au moins 2 caractères';
+                        sessionError.classList.remove('hidden');
+                        return;
+                    }
+                    
+                    if (isPseudoTaken(pseudo)) {
+                        sessionError.textContent = '❌ Ce pseudo est déjà utilisé par un autre utilisateur connecté';
+                        sessionError.classList.remove('hidden');
+                        return;
+                    }
+                    
+                    // Ajouter l'utilisateur à la session
+                    addUserToSession(pseudo);
+                    
+                    // Masquer la modal et afficher l'interface principale
+                    hideUserSessionModal();
+                    showMainInterface();
+                    
+                    console.log(`✅ Session créée pour ${pseudo}`);
+                });
+            }
             
             // Gestionnaire du bouton annuler
-            document.getElementById('cancel-session').addEventListener('click', function() {
-                // Annuler la connexion et retourner à l'écran d'authentification
-                sessionStorage.removeItem('commandement_auth');
-                hideUserSessionModal();
-                document.getElementById('auth-screen').style.display = 'flex';
-                console.log('🚫 Session annulée');
-            });
+            const cancelButton = document.getElementById('cancel-session');
+            if (cancelButton) {
+                cancelButton.addEventListener('click', function() {
+                    // Annuler la connexion et retourner à l'écran d'authentification
+                    sessionStorage.removeItem('commandement_auth');
+                    hideUserSessionModal();
+                    document.getElementById('auth-screen').style.display = 'flex';
+                    console.log('🚫 Session annulée');
+                });
+            }
             
             // Effacer les erreurs quand l'utilisateur tape
-            document.getElementById('user-pseudo').addEventListener('input', function() {
-                sessionError.classList.add('hidden');
-            });
+            const pseudoInput = document.getElementById('user-pseudo');
+            if (pseudoInput && sessionError) {
+                pseudoInput.addEventListener('input', function() {
+                    sessionError.classList.add('hidden');
+                });
+            }
+            
+            // Afficher le statut Firebase au chargement
+            displayFirebaseStatus();
         });
 
         // Ajouter le bouton de déconnexion à l'en-tête
