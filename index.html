@@ -953,38 +953,15 @@
             showTab('dashboard');
         });
 
-        // Gestion des données
+        // Gestion des données (redirigée vers Firebase)
         function saveData() {
-            localStorage.setItem('commandement_squads', JSON.stringify(squads));
-            localStorage.setItem('commandement_missions', JSON.stringify(missions));
-            localStorage.setItem('commandement_selectedBase', selectedBase);
-            localStorage.setItem('commandement_selectedFOB', selectedFOB);
+            // Rediriger vers la nouvelle fonction Firebase
+            saveState();
         }
 
         function loadData() {
-            const savedSquads = localStorage.getItem('commandement_squads');
-            const savedMissions = localStorage.getItem('commandement_missions');
-            const savedBase = localStorage.getItem('commandement_selectedBase');
-            const savedFOB = localStorage.getItem('commandement_selectedFOB');
-            
-            if (savedSquads) {
-                squads = JSON.parse(savedSquads);
-            }
-            if (savedMissions) {
-                missions = JSON.parse(savedMissions);
-            }
-            if (savedBase) {
-                selectedBase = savedBase;
-            }
-            if (savedFOB) {
-                selectedFOB = savedFOB;
-            }
-            
-            renderSquadsList();
-            renderDashboardAllSquads();
-            renderDashboardMissions();
-            renderDashboardCompletedMissions();
-            updateBaseAndFOBDisplay();
+            // Rediriger vers la nouvelle fonction Firebase
+            loadState();
         }
 
         // Gestion des onglets
@@ -5159,20 +5136,90 @@
         
         // === FONCTIONS DE SAUVEGARDE ET CHARGEMENT ===
         
-        // Fonction pour sauvegarder l'état complet
+        // Fonction pour sauvegarder l'état complet via Firebase
         function saveState() {
             const state = {
                 squads: squads,
                 missions: missions,
                 selectedSquad: selectedSquad,
                 selectedMission: selectedMission,
-                lastSaved: new Date().toISOString()
+                selectedBase: selectedBase,
+                selectedFOB: selectedFOB,
+                lastSaved: new Date().toISOString(),
+                lastModifiedBy: currentUser ? currentUser.pseudo : 'Système'
             };
-            localStorage.setItem('commandement_os_state', JSON.stringify(state));
+            
+            // Sauvegarder dans Firebase en priorité
+            if (isFirebaseEnabled && database) {
+                try {
+                    database.ref('commandement_data').set(state)
+                        .then(() => {
+                            console.log('💾 Données synchronisées avec Firebase');
+                        })
+                        .catch((error) => {
+                            console.error('❌ Erreur Firebase, fallback localStorage:', error);
+                            localStorage.setItem('commandement_os_state', JSON.stringify(state));
+                        });
+                } catch (error) {
+                    console.error('❌ Erreur Firebase, fallback localStorage:', error);
+                    localStorage.setItem('commandement_os_state', JSON.stringify(state));
+                }
+            } else {
+                // Fallback localStorage si Firebase indisponible
+                localStorage.setItem('commandement_os_state', JSON.stringify(state));
+                console.log('💾 Données sauvegardées localement (Firebase indisponible)');
+            }
         }
         
-        // Fonction pour charger l'état complet
+        // Fonction pour charger l'état complet depuis Firebase avec écoute temps réel
         function loadState() {
+            if (isFirebaseEnabled && database) {
+                try {
+                    // Charger les données initiales
+                    database.ref('commandement_data').once('value')
+                        .then((snapshot) => {
+                            const state = snapshot.val();
+                            if (state) {
+                                squads = state.squads || {};
+                                missions = state.missions || {};
+                                selectedSquad = state.selectedSquad || null;
+                                selectedMission = state.selectedMission || null;
+                                selectedBase = state.selectedBase || null;
+                                selectedFOB = state.selectedFOB || null;
+                                
+                                console.log('🔄 Données chargées depuis Firebase');
+                                
+                                // Mettre à jour l'interface
+                                updateAllInterfaces();
+                                
+                                // Notification de synchronisation
+                                if (state.lastModifiedBy && currentUser && state.lastModifiedBy !== currentUser.pseudo) {
+                                    showNotification('🔄 Synchronisation', `Données mises à jour par ${state.lastModifiedBy}`, 'info');
+                                }
+                            } else {
+                                console.log('🆕 Aucune donnée Firebase, initialisation vide');
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('❌ Erreur chargement Firebase, fallback localStorage:', error);
+                            loadStateFromLocalStorage();
+                        });
+                    
+                    // Écoute temps réel des changements
+                    setupRealtimeDataListener();
+                    return true;
+                } catch (error) {
+                    console.error('❌ Erreur Firebase, fallback localStorage:', error);
+                    return loadStateFromLocalStorage();
+                }
+            } else {
+                // Fallback localStorage si Firebase indisponible
+                return loadStateFromLocalStorage();
+            }
+        }
+        
+        // Fonction fallback pour charger depuis localStorage
+        function loadStateFromLocalStorage() {
             try {
                 const savedState = localStorage.getItem('commandement_os_state');
                 if (savedState) {
@@ -5181,12 +5228,76 @@
                     missions = state.missions || {};
                     selectedSquad = state.selectedSquad || null;
                     selectedMission = state.selectedMission || null;
+                    selectedBase = state.selectedBase || null;
+                    selectedFOB = state.selectedFOB || null;
+                    
+                    console.log('💾 Données chargées depuis localStorage');
+                    updateAllInterfaces();
                     return true;
                 }
             } catch (error) {
-                console.error('Erreur lors du chargement des données:', error);
+                console.error('Erreur lors du chargement localStorage:', error);
             }
             return false;
+        }
+        
+        // Fonction pour configurer l'écoute temps réel des données Firebase
+        function setupRealtimeDataListener() {
+            if (!isFirebaseEnabled || !database) return;
+            
+            try {
+                database.ref('commandement_data').on('value', (snapshot) => {
+                    const state = snapshot.val();
+                    if (state && state.lastModifiedBy && currentUser && state.lastModifiedBy !== currentUser.pseudo) {
+                        // Mise à jour des données depuis un autre utilisateur
+                        squads = state.squads || {};
+                        missions = state.missions || {};
+                        selectedSquad = state.selectedSquad || null;
+                        selectedMission = state.selectedMission || null;
+                        selectedBase = state.selectedBase || null;
+                        selectedFOB = state.selectedFOB || null;
+                        
+                        console.log(`🔄 Synchronisation temps réel depuis ${state.lastModifiedBy}`);
+                        
+                        // Mettre à jour toute l'interface
+                        updateAllInterfaces();
+                        
+                        // Notification de synchronisation
+                        showNotification('🔄 Synchronisation', `Données mises à jour par ${state.lastModifiedBy}`, 'info');
+                    }
+                });
+                
+                console.log('🔊 Écoute temps réel Firebase activée');
+            } catch (error) {
+                console.error('❌ Erreur configuration écoute Firebase:', error);
+            }
+        }
+        
+        // Fonction pour mettre à jour toutes les interfaces
+        function updateAllInterfaces() {
+            try {
+                // Mettre à jour toutes les listes et affichages
+                renderSquadsList();
+                renderDashboardAllSquads();
+                renderMissionList();
+                renderDashboardMissions();
+                renderDashboardCompletedMissions();
+                updateStats();
+                renderDetailedStats();
+                updateBaseAndFOBDisplay();
+                
+                // Mettre à jour les détails si une escouade/mission est sélectionnée
+                if (selectedSquad && squads[selectedSquad]) {
+                    renderSquadDetail();
+                }
+                if (selectedMission && missions[selectedMission]) {
+                    renderMissionDetail(selectedMission);
+                }
+                
+                console.log('🔄 Toutes les interfaces mises à jour');
+            } catch (error) {
+                console.error('❌ Erreur mise à jour interfaces:', error);
+            }
         }
         
         // === MODAL DE CONFIRMATION PERSONNALISÉE ===
@@ -7556,7 +7667,7 @@
         // ===== SYSTÈME D'AUTHENTIFICATION ET SESSIONS =====
         const AUTH_CREDENTIALS = {
             username: 'COMMANDANT',
-            password: 'ETAT-MAJOR-2024'
+            password: 'admin'
         };
 
         // Configuration Firebase pour synchronisation multi-appareils
@@ -7732,6 +7843,9 @@
             // Afficher les informations de session
             updateUserSessionDisplay();
             
+            // Charger les données avec synchronisation Firebase
+            loadState();
+            
             // Initialiser l'heure
             updateTime();
             setInterval(updateTime, 1000);
@@ -7749,10 +7863,14 @@
                     'Interface État-Major activée avec succès';
                 showNotification(welcomeMessage, 'success');
                 
-                // Notification de synchronisation active
+                // Notification de synchronisation complète active
                 if (isFirebaseEnabled) {
                     setTimeout(() => {
-                        showNotification('🔄 Synchronisation escouades SL activée', 'info');
+                        showNotification('🔄 Synchronisation temps réel activée', 'Toutes les données sont synchronisées entre utilisateurs', 'info');
+                    }, 2000);
+                } else {
+                    setTimeout(() => {
+                        showNotification('📱 Mode local', 'Données sauvegardées localement uniquement', 'warning');
                     }, 2000);
                 }
             }, 1000);
