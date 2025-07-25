@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>COMMANDEMENT_OS // INTERFACE ESCOUADE</title>
+    
+    <!-- iOS Compatibility Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="COMMANDEMENT_OS">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    
+    <!-- iOS App Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiBmaWxsPSIjMGQxMTE3Ii8+Cjx0ZXh0IHg9IjkwIiB5PSI5MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI0OCIgZmlsbD0iIzIyZDNlZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkM8L3RleHQ+Cjwvc3ZnPg==">
+    <link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUyIiBoZWlnaHQ9IjE1MiIgdmlld0JveD0iMCAwIDE1MiAxNTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTIiIGhlaWdodD0iMTUyIiBmaWxsPSIjMGQxMTE3Ii8+Cjx0ZXh0IHg9Ijc2IiB5PSI3NiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSI0MCIgZmlsbD0iIzIyZDNlZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkM8L3RleHQ+Cjwvc3ZnPg==">
+    <link rel="apple-touch-icon" sizes="120x120" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMGQxMTE3Ii8+Cjx0ZXh0IHg9IjYwIiB5PSI2MCIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIzMiIgZmlsbD0iIzIyZDNlZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPkM8L3RleHQ+Cjwvc3ZnPg==">
+    <!-- Embedded Resources for Offline Compatibility -->
+    <style>
+        /* Essential CSS to replace Tailwind */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        .min-h-screen { min-height: 100vh; }
+        .text-gray-300 { color: #d1d5db; }
+        .p-4 { padding: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .text-3xl { font-size: 1.875rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .font-bold { font-weight: bold; }
+        .text-cyan-300 { color: #67e8f9; }
+        .text-amber-400 { color: #fbbf24; }
+        .text-gray-400 { color: #9ca3af; }
+        .text-center { text-align: center; }
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .hidden { display: none; }
+        .block { display: block; }
+        .w-full { width: 100%; }
+        .max-w-md { max-width: 28rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-6 > * + * { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .fixed { position: fixed; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .bg-black { background-color: #000; }
+        .bg-opacity-50 { background-color: rgba(0, 0, 0, 0.5); }
+        .flex-col { flex-direction: column; }
+        .justify-center { justify-content: center; }
+        .z-50 { z-index: 50; }
+        .relative { position: relative; }
+        .text-white { color: #fff; }
+        .text-lg { font-size: 1.125rem; }
+        .text-sm { font-size: 0.875rem; }
+        .overflow-y-auto { overflow-y: auto; }
+        .max-h-60 { max-height: 15rem; }
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        :root {
+            --bg-dark: #0d1117; --bg-panel: rgba(17, 24, 39, 0.6); --border-color: rgba(55, 65, 81, 0.7);
+            --text-primary: #c9d1d9; --text-secondary: #8b949e; --accent-cyan: #22d3ee;
+            --accent-cyan-glow: rgba(34, 211, 238, 0.3); --accent-amber: #fcd34d;
+            --accent-amber-glow: rgba(252, 211, 77, 0.3); --accent-red: #f87171; --accent-green: #34d399;
+        }
+        body { 
+            font-family: 'Courier New', 'Monaco', 'Menlo', 'Consolas', monospace; 
+            background-color: var(--bg-dark); 
+            color: var(--text-primary); 
+            font-size: 16px; 
+            overflow-x: hidden;
+            /* iOS Specific Fixes */
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Safe area for iOS notch */
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        body::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-image: -webkit-linear-gradient(to right, rgba(55, 65, 81, 0.15) 1px, transparent 1px), -webkit-linear-gradient(to bottom, rgba(55, 65, 81, 0.15) 1px, transparent 1px);
+            background-image: linear-gradient(to right, rgba(55, 65, 81, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(55, 65, 81, 0.15) 1px, transparent 1px); 
+            background-size: 40px 40px; 
+            z-index: -2; 
+        }
+        body::after { 
+            content: ''; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: -webkit-repeating-linear-gradient(0deg, rgba(0,0,0,0.3), rgba(0,0,0,0.3) 1px, transparent 1px, transparent 3px);
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.3), rgba(0,0,0,0.3) 1px, transparent 1px, transparent 3px); 
+            pointer-events: none; 
+            z-index: 100; 
+        }
+        .panel { 
+            background-color: var(--bg-panel); 
+            border: 1px solid var(--border-color); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            -webkit-border-radius: 8px;
+            border-radius: 8px; 
+            padding: 1.5rem; 
+            -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 5px rgba(55, 65, 81, 0.5);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 5px rgba(55, 65, 81, 0.5); 
+        }
+        .terminal-input, .terminal-select, .terminal-textarea { 
+            background-color: rgba(17, 24, 39, 0.9); 
+            border: 1px solid var(--border-color); 
+            color: var(--text-primary); 
+            font-family: 'Share Tech Mono', monospace; 
+            padding: 10px; 
+            -webkit-border-radius: 4px;
+            border-radius: 4px; 
+            -webkit-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out; 
+            width: 100%;
+            /* iOS Specific Input Fixes */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+            /* Prevent iOS zoom on input focus */
+            font-size: 16px;
+            /* Fix iOS input rendering */
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+        .terminal-input:focus, .terminal-select:focus, .terminal-textarea:focus { 
+            outline: none; 
+            border-color: var(--accent-cyan); 
+            -webkit-box-shadow: 0 0 0 3px var(--accent-cyan-glow);
+            box-shadow: 0 0 0 3px var(--accent-cyan-glow); 
+        }
+        .terminal-button { 
+            background-color: var(--bg-panel); 
+            border: 1px solid var(--border-color); 
+            color: var(--text-primary); 
+            padding: 10px 16px; 
+            -webkit-border-radius: 4px;
+            border-radius: 4px; 
+            -webkit-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            justify-content: center; 
+            font-family: 'Share Tech Mono', monospace;
+            /* iOS Specific Button Fixes */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent iOS button styling */
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+            /* Better touch target for iOS */
+            min-height: 44px;
+            min-width: 44px;
+        }
+        .terminal-button:hover:not(:disabled) { 
+            color: var(--accent-cyan); 
+            border-color: var(--accent-cyan); 
+            -webkit-box-shadow: 0 0 10px var(--accent-cyan-glow), inset 0 0 5px var(--accent-cyan-glow);
+            box-shadow: 0 0 10px var(--accent-cyan-glow), inset 0 0 5px var(--accent-cyan-glow); 
+            cursor: pointer; 
+        }
+        .terminal-button.primary { 
+            background-color: var(--accent-cyan); 
+            color: var(--bg-dark); 
+            border-color: var(--accent-cyan); 
+        }
+        .terminal-button.primary:hover:not(:disabled) { 
+            -webkit-box-shadow: 0 0 15px var(--accent-cyan-glow);
+            box-shadow: 0 0 15px var(--accent-cyan-glow); 
+        }
+        .terminal-button.danger { 
+            background-color: var(--accent-red); 
+            color: var(--bg-dark); 
+            border-color: var(--accent-red); 
+        }
+        .terminal-button.danger:hover:not(:disabled) { 
+            -webkit-box-shadow: 0 0 15px rgba(248, 113, 113, 0.3);
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.3); 
+        }
+        
+        /* Styles spécifiques aux cartes de membres */
+        .member-card { 
+            background-color: var(--bg-panel); 
+            border: 1px solid var(--border-color); 
+            -webkit-border-radius: 8px;
+            border-radius: 8px; 
+            padding: 1rem; 
+            -webkit-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out; 
+        }
+        .member-card:hover { 
+            border-color: var(--accent-cyan); 
+            -webkit-box-shadow: 0 0 10px var(--accent-cyan-glow);
+            box-shadow: 0 0 10px var(--accent-cyan-glow); 
+        }
+        .leader-card { 
+            border-left: 4px solid var(--accent-amber); 
+            background: -webkit-linear-gradient(90deg, rgba(252, 211, 77, 0.1) 0%, transparent 100%);
+            background: linear-gradient(90deg, rgba(252, 211, 77, 0.1) 0%, transparent 100%); 
+        }
+        .member-card-label { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; font-weight: bold; letter-spacing: 1px; }
+        .grade-badge { 
+            padding: 0.25rem 0.5rem; 
+            -webkit-border-radius: 4px;
+            border-radius: 4px; 
+            font-size: 0.75rem; 
+            font-weight: bold; 
+        }
+        .grade-badge.officer { 
+            background-color: rgba(252, 211, 77, 0.2); 
+            color: var(--accent-amber); 
+            border: 1px solid var(--accent-amber); 
+        }
+        .grade-badge.nco { 
+            background-color: rgba(34, 211, 238, 0.2); 
+            color: var(--accent-cyan); 
+            border: 1px solid var(--accent-cyan); 
+        }
+        .grade-badge.enlisted { 
+            background-color: rgba(156, 163, 175, 0.2); 
+            color: #9ca3af; 
+            border: 1px solid #9ca3af; 
+        }
+        .uppercase-input { text-transform: uppercase; }
+        
+        /* Styles pour la sélection d'escouade */
+        .squad-selection-card { 
+            background-color: var(--bg-panel); 
+            border: 2px solid var(--border-color); 
+            -webkit-border-radius: 8px;
+            border-radius: 8px; 
+            padding: 1.5rem; 
+            cursor: pointer; 
+            -webkit-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out; 
+            text-align: center; 
+        }
+        .squad-selection-card:hover { 
+            -webkit-transform: translateY(-2px);
+            transform: translateY(-2px); 
+            -webkit-box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); 
+        }
+        .squad-selection-card.selected { 
+            border-color: var(--accent-cyan); 
+            -webkit-box-shadow: 0 0 20px var(--accent-cyan-glow);
+            box-shadow: 0 0 20px var(--accent-cyan-glow); 
+        }
+        .squad-name { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .squad-frequency { font-size: 0.9rem; color: var(--text-secondary); }
+        
+        /* iOS Specific Compatibility Styles */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS Safari specific styles */
+            .squad-selection-card {
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+                /* Better touch targets for iOS */
+                min-height: 44px;
+            }
+            
+            /* Fix iOS input focus issues */
+            .terminal-input:focus,
+            .terminal-select:focus,
+            .terminal-textarea:focus {
+                /* Prevent iOS zoom on focus */
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
+            }
+            
+            /* iOS scrolling improvements */
+            .overflow-y-auto {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Fix iOS button active states */
+            .terminal-button:active {
+                transform: scale(0.98);
+                -webkit-transform: scale(0.98);
+            }
+        }
+        
+        /* Additional iOS fixes for specific elements */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23666" d="M2 0L0 2h4zm0 5L0 3h4z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 12px;
+            padding-right: 30px;
+        }
+        
+        /* iOS specific scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-panel);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-300 p-4">
+    <!-- Header -->
+    <header class="mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-cyan-300">COMMANDEMENT_OS</h1>
+                <p class="text-gray-400">Interface Escouade</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Squad Selection Screen -->
+    <div id="squad-selection-screen">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-amber-400 mb-2">SÉLECTION D'ESCOUADE</h2>
+            <p class="text-gray-400">Choisissez le type d'escouade à configurer</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="squad-options">
+            <!-- Les options d'escouades seront générées ici -->
+        </div>
+        
+        <div class="text-center mt-8">
+            <p class="text-gray-400 text-sm">Cliquez directement sur une escouade pour la sélectionner</p>
+        </div>
+    </div>
+
+    <!-- Squad Configuration Screen -->
+    <div id="squad-config-screen" style="display: none;">
+        <!-- Squad Header -->
+        <div id="squad-header" class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+            <!-- Sera généré dynamiquement -->
+        </div>
+
+        <!-- COMMANDEMENT Section -->
+        <h4 class="text-lg mt-6 mb-3 text-amber-400 border-b border-amber-400/30 pb-2 font-bold tracking-widest">COMMANDEMENT</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4" id="commandement-container">
+            <!-- Chef et Second seront générés ici -->
+        </div>
+
+        <!-- OPERATEURS Section -->
+        <h4 class="text-lg mt-8 mb-3 text-amber-400 border-b border-amber-400/30 pb-2 font-bold tracking-widest">OPERATEURS</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4" id="operators-container">
+            <!-- Les opérateurs seront générés ici -->
+        </div>
+    </div>
+
+    <!-- Modal de sélection -->
+    <div id="selection-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="display: none; z-index: 1000;">
+        <div class="panel w-11/12 md:w-3/4 lg:w-2/3 xl:w-1/2 mx-4 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                <h3 id="selection-modal-title" class="text-lg font-bold text-amber-400">Sélectionner</h3>
+                <button class="modal-close-btn text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div id="selection-modal-grid" class="grid gap-2 flex-grow overflow-y-auto">
+                <!-- Options seront ajoutées dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration des escouades (couleurs et fréquences selon la photo fournie)
+        const SQUAD_CONFIG = {
+            'ALPHA': { color: '#4CAF50', frequency: 32 },
+            'BRAVO': { color: '#2196F3', frequency: 33 },
+            'CHARLIE': { color: '#9C27B0', frequency: 34 },
+            'DELTA': { color: '#FFEB3B', frequency: 35 },
+            'ECHO': { color: '#00BCD4', frequency: 36 },
+            'FOXTROT': { color: '#FF5722', frequency: 37 },
+            'GOLF': { color: '#E91E63', frequency: 38 },
+            'HOTEL': { color: '#8BC34A', frequency: 39 },
+            'INDIA': { color: '#F44336', frequency: 40 },
+            'JULIETTE': { color: '#607D8B', frequency: 41 },
+            'KILO': { color: '#795548', frequency: 42 },
+            'LIMA': { color: '#B71C1C', frequency: 43 },
+            'MIKE': { color: '#689F38', frequency: 44 },
+            'LOGISTIQUE': { color: '#000000', frequency: 45 },
+            'PLANTON': { color: '#808080', frequency: 52 }
+        };
+
+        // Variables globales
+        let selectedSquadType = null;
+        let currentSquad = null;
+        const DATA_STORAGE_KEY = 'commandement_os_escouade';
+        
+        // Configuration identique à index.html
+        const config = {
+            grades: ['Soldat', 'Soldat de 1ère classe', 'Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Major', 'Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine'],
+            roles: ['Fusilier', 'Grenadier', 'Mitrailleur', 'Tireur d\'élite', 'Médecin', 'Radio', 'Chef d\'équipe', 'Second', 'Conducteur', 'Mécanicien', 'Observateur', 'Éclaireur', 'Soutien']
+        };
+
+        // Fonctions utilitaires
+        function saveSquadState() {
+            try {
+                const dataToSave = {
+                    selectedSquadType,
+                    currentSquad
+                };
+                localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify(dataToSave));
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde:', error);
+            }
+        }
+
+        function loadSquadState() {
+            try {
+                const saved = localStorage.getItem(DATA_STORAGE_KEY);
+                if (saved) {
+                    const savedData = JSON.parse(saved);
+                    selectedSquadType = savedData.selectedSquadType;
+                    currentSquad = savedData.currentSquad;
+                    
+                    if (selectedSquadType && currentSquad) {
+                        showSquadConfigScreen();
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement:', error);
+            }
+        }
+        
+        function getGradeCategory(grade) {
+            const officers = ['Aspirant', 'Sous-Lieutenant', 'Lieutenant', 'Capitaine'];
+            const ncos = ['Caporal', 'Caporal-Chef', 'Sergent', 'Sergent-Chef', 'Adjudant', 'Adjudant-Chef', 'Major'];
+            
+            if (officers.includes(grade)) return 'officer';
+            if (ncos.includes(grade)) return 'nco';
+            return 'enlisted';
+        }
+        
+        function createDefaultSquad(squadType) {
+            return {
+                name: squadType,
+                type: squadType,
+                members: [
+                    { position: 'Chef', name: '', grade: 'Sergent', role: 'Chef d\'équipe', team: null },
+                    { position: 'Second', name: '', grade: 'Caporal-Chef', role: 'Second', team: null },
+                    ...Array(8).fill().map((_, i) => ({ 
+                        position: `Opérateur ${i+1}`, 
+                        name: '', 
+                        grade: 'Soldat', 
+                        role: 'Fusilier', 
+                        team: null 
+                    }))
+                ],
+                structure: 'basic',
+                isSplit: false,
+                createdAt: new Date().toISOString()
+            };
+        }
+        
+        // Fonction de création de carte de membre
+        function createMemberCard(m, squadName, idx) {
+            const isLeader = ['Chef', 'Second'].includes(m.position);
+            const gradeCategory = getGradeCategory(m.grade);
+            const leaderClass = isLeader ? 'leader-card' : '';
+            
+            return `
+                <div class="member-card ${leaderClass}">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg text-gray-200">${m.position}</span>
+                        <span class="grade-badge ${gradeCategory}">${m.grade}</span>
+                    </div>
+                    <div>
+                        <label class="member-card-label">NOM:</label>
+                        <input type="text" class="terminal-input uppercase-input" value="${m.name}" data-squad="${squadName}" data-index="${idx}" data-prop="name">
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-grow">
+                            <label class="member-card-label">GRADE:</label>
+                            <button class="terminal-button w-full justify-start selection-btn" data-squad="${squadName}" data-index="${idx}" data-prop="grade">${m.grade}</button>
+                        </div>
+                        <div class="flex-grow">
+                            <label class="member-card-label">ROLE:</label>
+                            <button class="terminal-button w-full justify-start selection-btn" data-squad="${squadName}" data-index="${idx}" data-prop="role">${m.role}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Fonction pour scinder l'équipe en deux sous-équipes
+        function splitTeam() {
+            if (!currentSquad || currentSquad.isSplit) return;
+            
+            // Assigner les équipes
+            currentSquad.members.forEach((member, index) => {
+                if (member.position === 'Chef') {
+                    member.team = 'asso';
+                } else if (member.position === 'Second') {
+                    member.team = 'soutien';
+                } else {
+                    // Répartir les 8 opérateurs : 4 avec le chef (asso), 4 avec le second (soutien)
+                    const operatorIndex = index - 2; // -2 car chef et second sont en premier
+                    member.team = operatorIndex < 4 ? 'asso' : 'soutien';
+                }
+            });
+            
+            currentSquad.isSplit = true;
+            saveSquadState();
+            renderSquadInterface();
+        }
+        
+        // Fonction pour fusionner les équipes
+        function mergeTeam() {
+            if (!currentSquad || !currentSquad.isSplit) return;
+            
+            // Retirer l'assignation d'équipe
+            currentSquad.members.forEach(member => {
+                member.team = null;
+            });
+            
+            currentSquad.isSplit = false;
+            saveSquadState();
+            renderSquadInterface();
+        }
+
+        // Fonction pour calculer la grille optimale selon le nombre d'options
+        function calculateOptimalGrid(optionsCount) {
+            if (optionsCount <= 4) return { cols: 2, maxHeight: 'auto' };
+            if (optionsCount <= 6) return { cols: 2, maxHeight: 'auto' };
+            if (optionsCount <= 9) return { cols: 3, maxHeight: 'auto' };
+            if (optionsCount <= 15) return { cols: 3, maxHeight: 'auto' }; // Plus généreux pour éviter le scroll
+            if (optionsCount <= 20) return { cols: 4, maxHeight: 'auto' };
+            if (optionsCount <= 24) return { cols: 4, maxHeight: '24rem' };
+            return { cols: 5, maxHeight: '28rem' };
+        }
+        
+        // Fonction d'ouverture de modal de sélection
+        function openSelectionModal(dataset) {
+            const { prop, squad, index } = dataset;
+            const modal = document.getElementById('selection-modal');
+            const titleEl = document.getElementById('selection-modal-title');
+            const gridEl = document.getElementById('selection-modal-grid');
+            
+            if (!modal || !titleEl || !gridEl) return;
+            
+            let options = [];
+            let title = '';
+            
+            if (prop === 'grade') {
+                options = config.grades;
+                title = 'Sélectionner un Grade';
+            } else if (prop === 'role') {
+                options = config.roles;
+                title = 'Sélectionner un Rôle';
+            }
+            
+            // Calculer la grille optimale
+            const gridConfig = calculateOptimalGrid(options.length);
+            
+            titleEl.textContent = title;
+            
+            // Appliquer la configuration de grille dynamique
+            gridEl.className = `grid grid-cols-${gridConfig.cols} gap-2`;
+            if (gridConfig.maxHeight !== 'auto') {
+                gridEl.style.maxHeight = gridConfig.maxHeight;
+                gridEl.style.overflowY = 'auto';
+            } else {
+                gridEl.style.maxHeight = 'none';
+                gridEl.style.overflowY = 'visible';
+            }
+            
+            gridEl.innerHTML = options.map(opt => 
+                `<button class="terminal-button selection-option-btn" data-value="${opt}">${opt}</button>`
+            ).join('');
+            
+            modal.dataset.squad = squad || '';
+            modal.dataset.index = index || '';
+            modal.dataset.prop = prop || '';
+            
+            modal.style.display = 'flex';
+        }
+        
+        // Fonction de rendu de la sélection d'escouade
+        function renderSquadSelection() {
+            const container = document.getElementById('squad-options');
+            container.innerHTML = Object.keys(SQUAD_CONFIG).map(squadType => {
+                const config = SQUAD_CONFIG[squadType];
+                const isSelected = selectedSquadType === squadType;
+                
+                return `
+                    <div class="squad-selection-card ${isSelected ? 'selected' : ''}" 
+                         data-squad-type="${squadType}"
+                         style="border-left: 4px solid ${config.color};">
+                        <div class="squad-name" style="color: ${config.color};">${squadType}</div>
+                        <div class="squad-frequency">FREQ: ${config.frequency} MHz</div>
+                        <div class="text-xs text-gray-500 mt-2">Escouade ${squadType.toLowerCase()}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Fonction de rendu de l'interface de configuration
+        function renderSquadInterface() {
+            if (!currentSquad) return;
+            
+            const squadConfig = SQUAD_CONFIG[currentSquad.type];
+            
+            // Rendu du header avec bouton de scission/fusion
+            const headerEl = document.getElementById('squad-header');
+            const splitButton = currentSquad.isSplit ? 
+                `<button id="merge-team-btn" class="terminal-button primary" style="padding: 6px 12px; font-size: 0.875rem;">🔗 Fusionner Équipe</button>` :
+                `<button id="split-team-btn" class="terminal-button primary" style="padding: 6px 12px; font-size: 0.875rem;">✂️ Scinder Équipe</button>`;
+            
+            headerEl.innerHTML = `
+                <div style="border-left: 4px solid ${squadConfig.color}; padding-left: 1rem; background: linear-gradient(90deg, ${squadConfig.color}10 0%, transparent 100%);">
+                    <h3 class="text-xl md:text-2xl" style="color: ${squadConfig.color}; text-shadow: 0 0 10px ${squadConfig.color}40;">
+                        RAPPORT: ${currentSquad.name} 
+                        <span class="text-lg text-amber-400 font-normal">// FREQ: ${squadConfig.frequency} MHz</span>
+                    </h3>
+                    <p class="text-sm text-gray-400 mt-1">AFFECTATION: <span class="text-gray-500">AUCUNE</span></p>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <button id="change-squad-btn" class="terminal-button" style="padding: 6px 12px; font-size: 0.875rem;">🔄 Changer</button>
+                    <button id="export-squad-btn" class="terminal-button" style="padding: 6px 12px; font-size: 0.875rem;">💾 Exporter</button>
+                    <button id="clear-all-btn" class="terminal-button danger" style="padding: 6px 12px; font-size: 0.875rem;">🗑️ Effacer</button>
+                    ${splitButton}
+                </div>
+            `;
+            
+            const chef = currentSquad.members.find(m => m.position === 'Chef');
+            const second = currentSquad.members.find(m => m.position === 'Second');
+            const operators = currentSquad.members.filter(m => m.position.startsWith('Opérateur'));
+            
+            if (currentSquad.isSplit) {
+                // Affichage avec équipes séparées
+                renderSplitTeams(chef, second, operators);
+            } else {
+                // Affichage normal
+                renderNormalTeam(chef, second, operators);
+            }
+        }
+        
+        // Fonction pour afficher l'équipe normale (non scindée)
+        function renderNormalTeam(chef, second, operators) {
+            // Rendu du commandement
+            const commandementContainer = document.getElementById('commandement-container');
+            commandementContainer.innerHTML = [
+                chef ? createMemberCard(chef, currentSquad.name, currentSquad.members.indexOf(chef)) : '',
+                second ? createMemberCard(second, currentSquad.name, currentSquad.members.indexOf(second)) : ''
+            ].join('');
+            
+            // Rendu des opérateurs
+            const operatorsContainer = document.getElementById('operators-container');
+            operatorsContainer.innerHTML = operators.map(m => 
+                createMemberCard(m, currentSquad.name, currentSquad.members.indexOf(m))
+            ).join('');
+        }
+        
+        // Fonction pour afficher les équipes scindées
+        function renderSplitTeams(chef, second, operators) {
+            const commandementContainer = document.getElementById('commandement-container');
+            const operatorsContainer = document.getElementById('operators-container');
+            
+            // Séparer les opérateurs par équipe
+            const assoOperators = operators.filter(m => m.team === 'asso');
+            const soutienOperators = operators.filter(m => m.team === 'soutien');
+            
+            // Affichage du commandement (chef et second)
+            commandementContainer.innerHTML = [
+                chef ? createMemberCard(chef, currentSquad.name, currentSquad.members.indexOf(chef)) : '',
+                second ? createMemberCard(second, currentSquad.name, currentSquad.members.indexOf(second)) : ''
+            ].join('');
+            
+            // Affichage des équipes séparées
+            operatorsContainer.innerHTML = `
+                <div class="col-span-full">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Équipe ASSO (Chef) -->
+                        <div class="panel" style="border-left: 4px solid #4CAF50; background: linear-gradient(90deg, rgba(76, 175, 80, 0.1) 0%, transparent 100%);">
+                            <h5 class="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">
+                                ⚔️ ÉQUIPE ASSO (Chef)
+                                <span class="text-sm text-gray-400">(${assoOperators.length + 1} membres)</span>
+                            </h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                ${chef ? createMemberCard(chef, currentSquad.name, currentSquad.members.indexOf(chef), 'asso') : ''}
+                                ${assoOperators.map(m => createMemberCard(m, currentSquad.name, currentSquad.members.indexOf(m), 'asso')).join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Équipe SOUTIEN (Second) -->
+                        <div class="panel" style="border-left: 4px solid #FF9800; background: linear-gradient(90deg, rgba(255, 152, 0, 0.1) 0%, transparent 100%);">
+                            <h5 class="text-lg font-bold text-orange-400 mb-4 flex items-center gap-2">
+                                🛡️ ÉQUIPE SOUTIEN (Second)
+                                <span class="text-sm text-gray-400">(${soutienOperators.length + 1} membres)</span>
+                            </h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                ${second ? createMemberCard(second, currentSquad.name, currentSquad.members.indexOf(second), 'soutien') : ''}
+                                ${soutienOperators.map(m => createMemberCard(m, currentSquad.name, currentSquad.members.indexOf(m), 'soutien')).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showSquadSelectionScreen() {
+            document.getElementById('squad-selection-screen').style.display = 'block';
+            document.getElementById('squad-config-screen').style.display = 'none';
+            renderSquadSelection();
+        }
+        
+        function showSquadConfigScreen() {
+            document.getElementById('squad-selection-screen').style.display = 'none';
+            document.getElementById('squad-config-screen').style.display = 'block';
+            renderSquadInterface();
+        }
+        
+        function showNotification(title, message) {
+            alert(`${title}: ${message}`);
+        }
+
+        // Fonction d'export
+        function exportSquadData() {
+            if (!currentSquad) return;
+            
+            const chef = currentSquad.members.find(m => m.position === 'Chef');
+            if (!chef || !chef.name.trim()) {
+                showNotification('Erreur', 'Le chef d\'escouade doit être renseigné pour exporter.');
+                return;
+            }
+
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                squads: {}
+            };
+            
+            exportData.squads[currentSquad.name] = {
+                name: currentSquad.name,
+                type: currentSquad.type,
+                personnel: [],
+                createdAt: currentSquad.createdAt || new Date().toISOString()
+            };
+
+            currentSquad.members.forEach(member => {
+                if (member.name && member.name.trim()) {
+                    exportData.squads[currentSquad.name].personnel.push({
+                        name: member.name,
+                        grade: member.grade,
+                        role: member.role,
+                        status: member.status || 'Actif',
+                        position: member.position || member.role || 'Opérateur',
+                        team: member.team || null
+                    });
+                }
+            });
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentSquad.name.toLowerCase()}_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            const totalPersonnel = exportData.squads[currentSquad.name].personnel.length;
+            showNotification('Succès', `Données ${currentSquad.name} exportées (${totalPersonnel} personnes)`);
+        }
+        
+        function clearAll() {
+            if (confirm('Voulez-vous vraiment effacer toutes les données ?')) {
+                currentSquad.members.forEach(member => {
+                    member.name = '';
+                    if (member.position === 'Chef') member.grade = 'Sergent';
+                    else if (member.position === 'Second') member.grade = 'Caporal-Chef';
+                    else member.grade = 'Soldat';
+                });
+                
+                saveSquadState();
+                renderSquadInterface();
+                showNotification('Succès', 'Toutes les données ont été effacées.');
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSquadState();
+            if (!selectedSquadType) {
+                showSquadSelectionScreen();
+            }
+        });
+
+        // Gestion des événements de saisie
+        document.body.addEventListener('change', (e) => {
+            if (e.target.matches('.terminal-input') && currentSquad) {
+                const { squad, index, prop } = e.target.dataset;
+                if (currentSquad.members[index]) {
+                    let value = e.target.value;
+                    if (prop === 'name') {
+                        value = value.toUpperCase();
+                        e.target.value = value;
+                    }
+                    currentSquad.members[index][prop] = value;
+                    saveSquadState();
+                }
+            }
+        });
+
+        // Gestion des clics
+        document.body.addEventListener('click', (e) => {
+            const target = e.target.closest('button') || e.target.closest('.squad-selection-card');
+            if (!target) return;
+
+            if (target.id === 'clear-all-btn') {
+                clearAll();
+            } else if (target.id === 'export-squad-btn') {
+                exportSquadData();
+            } else if (target.id === 'change-squad-btn') {
+                showSquadSelectionScreen();
+            } else if (target.classList.contains('squad-selection-card')) {
+                // Sélection directe sans confirmation
+                selectedSquadType = target.dataset.squadType;
+                currentSquad = createDefaultSquad(selectedSquadType);
+                saveSquadState();
+                showSquadConfigScreen();
+            } else if (target.id === 'split-team-btn') {
+                splitTeam();
+            } else if (target.id === 'merge-team-btn') {
+                mergeTeam();
+            } else if (target.classList.contains('selection-btn')) {
+                openSelectionModal(target.dataset);
+            } else if (target.classList.contains('selection-option-btn')) {
+                const modal = document.getElementById('selection-modal');
+                if (!modal) return;
+
+                const { squad, index, prop } = modal.dataset;
+                const value = target.dataset.value;
+
+                if (prop && index !== undefined && currentSquad) {
+                    const member = currentSquad.members[parseInt(index, 10)];
+                    if (member) {
+                        member[prop] = value;
+                        saveSquadState();
+                        renderSquadInterface();
+                    }
+                }
+                
+                modal.style.display = 'none';
+            } else if (target.classList.contains('modal-close-btn')) {
+                const modal = document.getElementById('selection-modal');
+                if (modal) modal.style.display = 'none';
+            }
+        });
+
+        // Fermeture de modal en cliquant à l'extérieur
+        document.getElementById('selection-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                e.currentTarget.style.display = 'none';
+            }
+        });
+        
+        // ========== iOS COMPATIBILITY ENHANCEMENTS ==========
+        
+        // Detect iOS devices
+        function isIOSDevice() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+                   /Safari/.test(navigator.userAgent) && /Mobile/.test(navigator.userAgent);
+        }
+        
+        // iOS specific fixes
+        if (isIOSDevice()) {
+            console.log('🍎 iOS détecté - Application des améliorations iOS pour escouade.html');
+            
+            // Fix viewport meta tag for iOS
+            function fixIOSViewport() {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                if (viewport) {
+                    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+                }
+            }
+            
+            // Prevent iOS zoom on input focus
+            function preventIOSZoom() {
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    const currentFontSize = window.getComputedStyle(input).fontSize;
+                    const fontSize = parseFloat(currentFontSize);
+                    if (fontSize < 16) {
+                        input.style.fontSize = '16px';
+                    }
+                });
+            }
+            
+            // Add touch feedback for iOS
+            function addIOSTouchFeedback() {
+                const touchElements = document.querySelectorAll('.terminal-button, .squad-selection-card');
+                
+                touchElements.forEach(element => {
+                    element.addEventListener('touchstart', function(e) {
+                        this.style.transform = 'scale(0.95)';
+                        this.style.opacity = '0.8';
+                        this.style.transition = 'all 0.1s ease';
+                    }, { passive: true });
+                    
+                    element.addEventListener('touchend', function(e) {
+                        setTimeout(() => {
+                            this.style.transform = '';
+                            this.style.opacity = '';
+                            this.style.transition = 'all 0.2s ease-in-out';
+                        }, 100);
+                    }, { passive: true });
+                    
+                    element.addEventListener('touchcancel', function(e) {
+                        this.style.transform = '';
+                        this.style.opacity = '';
+                        this.style.transition = 'all 0.2s ease-in-out';
+                    }, { passive: true });
+                });
+            }
+            
+            // Fix iOS modal behavior
+            function fixIOSModals() {
+                const modal = document.getElementById('selection-modal');
+                if (modal) {
+                    // Prevent body scroll when modal is open
+                    const originalShowModal = () => {
+                        document.body.style.overflow = 'hidden';
+                        document.body.style.position = 'fixed';
+                        document.body.style.width = '100%';
+                    };
+                    
+                    const originalHideModal = () => {
+                        document.body.style.overflow = '';
+                        document.body.style.position = '';
+                        document.body.style.width = '';
+                    };
+                    
+                    // Override modal display changes
+                    const observer = new MutationObserver((mutations) => {
+                        mutations.forEach((mutation) => {
+                            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                                const display = modal.style.display;
+                                if (display === 'flex' || display === 'block') {
+                                    originalShowModal();
+                                } else if (display === 'none') {
+                                    originalHideModal();
+                                }
+                            }
+                        });
+                    });
+                    
+                    observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
+                }
+            }
+            
+            // Enhance scrolling for iOS
+            function enhanceIOSScrolling() {
+                const scrollableElements = document.querySelectorAll('.overflow-y-auto, .overflow-auto');
+                scrollableElements.forEach(element => {
+                    element.style.webkitOverflowScrolling = 'touch';
+                });
+            }
+            
+            // Fix iOS input focus issues
+            function fixIOSInputFocus() {
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('focus', function() {
+                        // Prevent viewport jump on focus
+                        setTimeout(() => {
+                            if (document.activeElement === this) {
+                                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 300);
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        // Fix viewport after blur
+                        setTimeout(() => {
+                            window.scrollTo(0, 0);
+                        }, 100);
+                    });
+                });
+            }
+            
+            // Handle iOS orientation changes
+            function handleIOSOrientationChange() {
+                window.addEventListener('orientationchange', function() {
+                    setTimeout(() => {
+                        fixIOSViewport();
+                        preventIOSZoom();
+                        // Force repaint
+                        document.body.style.display = 'none';
+                        document.body.offsetHeight; // Trigger reflow
+                        document.body.style.display = '';
+                    }, 500);
+                });
+            }
+            
+            // Apply iOS fixes to dynamically added elements
+            function observeIOSChanges() {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'childList') {
+                            mutation.addedNodes.forEach((node) => {
+                                if (node.nodeType === Node.ELEMENT_NODE) {
+                                    // Apply fixes to new inputs
+                                    const newInputs = node.querySelectorAll ? node.querySelectorAll('input, select, textarea') : [];
+                                    newInputs.forEach(input => {
+                                        const fontSize = parseFloat(window.getComputedStyle(input).fontSize);
+                                        if (fontSize < 16) {
+                                            input.style.fontSize = '16px';
+                                        }
+                                    });
+                                    
+                                    // Apply touch feedback to new buttons
+                                    const newButtons = node.querySelectorAll ? node.querySelectorAll('.terminal-button, .squad-selection-card') : [];
+                                    newButtons.forEach(button => {
+                                        button.addEventListener('touchstart', function(e) {
+                                            this.style.transform = 'scale(0.95)';
+                                            this.style.opacity = '0.8';
+                                        }, { passive: true });
+                                        
+                                        button.addEventListener('touchend', function(e) {
+                                            setTimeout(() => {
+                                                this.style.transform = '';
+                                                this.style.opacity = '';
+                                            }, 100);
+                                        }, { passive: true });
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                observer.observe(document.body, { childList: true, subtree: true });
+            }
+            
+            // Initialize all iOS fixes
+            function initializeIOSFixes() {
+                fixIOSViewport();
+                preventIOSZoom();
+                addIOSTouchFeedback();
+                fixIOSModals();
+                enhanceIOSScrolling();
+                fixIOSInputFocus();
+                handleIOSOrientationChange();
+                observeIOSChanges();
+                
+                console.log('✅ Toutes les améliorations iOS appliquées à escouade.html');
+            }
+            
+            // Apply fixes when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeIOSFixes);
+            } else {
+                initializeIOSFixes();
+            }
+        }
+    </script>
+</body>
+</html>

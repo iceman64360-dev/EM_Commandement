@@ -1,0 +1,29 @@
+# Fichiers temporaires et de cache
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dossiers de développement
+node_modules/
+.vscode/
+.idea/
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+*~
+
+# Fichiers sensibles (si ajoutés plus tard)
+config.local.js
+*.env
+*.key
+
+# Dossiers de test (supprimés du projet)
+Datas/
+test_*
