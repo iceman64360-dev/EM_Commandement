@@ -1914,7 +1914,7 @@
             
             // Trouver les missions assignées à cette escouade
             const assignedMissions = Object.values(missions).filter(mission => 
-                mission.assignedSquads.includes(selectedSquad)
+                mission.assignedSquads && mission.assignedSquads.includes(selectedSquad)
             );
             
             const squad = squads[selectedSquad];
